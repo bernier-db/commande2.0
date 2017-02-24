@@ -1,3 +1,4 @@
+//Recommended structure for collections
 meals = {
     'name': String,
     'price': Decimal,
@@ -6,9 +7,10 @@ meals = {
 }
 
 orders = {
-    'closed': Bool,
-    'waiter': String,
+    'table' = Int,
     'date': Date,
+    'closed': Bool,
+    'waiter': String,  
     'items': [
         {
             'name': String,
@@ -20,5 +22,5 @@ orders = {
 
 waiters = {
     'name': String,
-    'comments': [String]
+    'comments': [{'orderId': String, 'comment': String}]
 }
