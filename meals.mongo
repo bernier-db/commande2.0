@@ -21,6 +21,5 @@ orders = {
 }
 
 waiters = {
-    'name': String,
-    'comments': [{'orderId': String, 'comment': String}]
+    'name': String
 }
