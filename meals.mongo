@@ -1,0 +1,24 @@
+meals = {
+    'name': String,
+    'price': Decimal,
+    'description': String,
+    'available': Bool,
+}
+
+orders = {
+    'closed': Bool,
+    'waiter': String,
+    'date': Date,
+    'items': [
+        {
+            'name': String,
+            'price': Decimal
+        }],
+    'commentsRest': String,
+    'commentsWait': String
+}
+
+waiters = {
+    'name': String,
+    'comments': [String]
+}
