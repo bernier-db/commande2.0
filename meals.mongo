@@ -4,6 +4,7 @@ meals = {
     'price': Decimal,
     'description': String,
     'available': Bool,
+    'Category': String
 }
 
 orders = {
