@@ -4,7 +4,8 @@ meals = {
     'price': Decimal,
     'description': String,
     'available': Bool,
-    'Category': String
+    'category': String,
+    'image' : String
 }
 
 orders = {
@@ -21,6 +22,7 @@ orders = {
     'commentsWait': String
 }
 
+//Vaut la peine??
 waiters = {
     'name': String
 }

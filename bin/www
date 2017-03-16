@@ -4,7 +4,7 @@
  * Module dependencies.
  */
 
-var app = require('../app');
+var app = require('../app').app;
 var debug = require('debug')('commande2.0:server');
 var http = require('http');
 
@@ -19,7 +19,8 @@ app.set('port', port);
  * Create HTTP server.
  */
 
-var server = http.createServer(app);
+var server = require('../app').server;
+
 
 /**
  * Listen on provided port, on all network interfaces.
@@ -28,6 +29,8 @@ var server = http.createServer(app);
 server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
+
+
 
 /**
  * Normalize a port into a number, string, or false.
@@ -88,3 +91,10 @@ function onListening() {
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
 }
+
+
+
+
+
+
+
