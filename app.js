@@ -75,19 +75,27 @@ app.use(function(err, req, res, next) {
 });
 
 // Socket.io events
-
-io.on('connection', function (socket) {
-    //Rendre table verte
+var clients = {};
+io.on('connection', function (socket) {    
+    
     socket.on('log', function (data) {
-        console.log(data, 'connection');
+        
         io.emit('log', data);
     });
-    //Rendre table rouge
+    
     socket.on('help', function (message) {
 
         io.emit("help", message);
     });
-
+    socket.on('msg', function (message) {
+        console.log(message);
+        io.emit("msg", message);
+    });
+    socket.on('coming', function(data) {
+        
+        io.emit('coming', data);
+    });
+    
 });
 
 

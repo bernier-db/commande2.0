@@ -1,3 +1,13 @@
+<!-- Category -->
+<fieldset class="small-10 small-centered columns">
+    <legend>Catégories</legend>
+    <form method='post' action="/gestion/addCategory">
+        <label>Nom</label>
+        <input name="name" type="text">
+        <input type="submit" value="Ajouter">
+    </form>
+</fieldset>
+<!-- Meal -->
 <fieldset class="small-10 small-centered columns">
     <legend>Repas</legend>
     <form method='post' action="/gestion/addMeal">
@@ -12,7 +22,9 @@
         <input type='radio' name="available" value="false">Non
         <br>
         <label>Catégorie</label>
-        <input name="category" type="text">
+        <select  name="category">
+            <option ng-repeat="cat in categories" value="{{cat.name}}">{{cat.name}}</option>
+        </select>
         <label>Url Image</label>
         <input name="image" type="text">
 
@@ -32,20 +44,22 @@
 
         <label>Fermée?</label>
         <input type='radio' name="closed" value="true">Oui
-        <input type='radio' name="closed" value="false">Non<br>
+        <input type='radio' name="closed" value="false">Non
+        <br>
         <label>Serveur</label>
         <input name="waiter" type="text">
         <label>Items:</label>
-        <div name="item" ng-repeat="meal in meals">         
+        <div name="item" ng-repeat="meal in meals">
             <input type="checkbox" name="item" value="{{meal._id}}"> {{meal.name}}
         </div>
         <label>Commentaires sur Resto</label>
         <textarea name="commentsRest"></textarea>
         <label>Commentaires sur Waiter</label>
         <textarea name="commentsWait"></textarea>
-        <input type="submit" id="subOrder" value="Save">
+        <input type="submit" id="subOrder" value="Ajouter">
     </form>
 </fieldset>
+
 <script type="text/javascript">
     //mettre la date du jour par défaut
     Date.prototype.toDateInputValue = (function () {

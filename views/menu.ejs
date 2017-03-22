@@ -10,9 +10,14 @@
     <h1>MENU</h1>
 
     <button onClick='clicked()'>Click me!</button>
+    <textarea id="msg">
+        
+    </textarea>
+    <button onclick="sendMsg()">Envoyer</button>
     <script src="/socket.io/socket.io.js"></script>
     <script>
-        var socket = io.connect('http://localhost:3000');
+        /****  IMPORTANT Entrer l'Adresse ip du server  ****/
+        var socket = io.connect('http://10.10.50.103:3000');
         
         var nom = prompt('#table:');
         
@@ -26,6 +31,17 @@
                 tableId: nom
             });
         }
+        
+        function sendMsg() {
+            socket.emit('msg', {
+                tableId: nom,
+                msg : document.getElementById('msg').value
+            });
+        }
+        socket.on('coming', function(data){
+            if(nom == data.tableId)
+            alert('Un(e) server(se) a vu votre demande d\'assistance');
+        })
     </script>
 </body>
 
