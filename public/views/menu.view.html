@@ -1,0 +1,54 @@
+<div id='outer'>
+    <h1>MENU</h1>
+
+    <button class="button alert" onClick='clicked()'>Click me!</button>
+    <textarea id="msg">
+
+    </textarea>
+    <button class="button" onclick="sendMsg()">Envoyer</button>
+    <br>
+
+    <script src="bower_components/jquery/dist/jquery.js"></script>
+    <script src="js/vendor/foundation.js"></script>
+
+
+
+
+
+</div>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    /****  IMPORTANT Entrer l'Adresse ip du server  ****/
+    var socket = io.connect('http://10.10.50.91:3000');
+    var scope = angular.element($("#outer")).scope();
+    var nom;
+    angular.element(function () {
+        console.log('page loading completed');
+
+        //Here your view content is fully loaded !!
+        nom = scope.tableId;
+
+
+
+        socket.emit('log', {
+            tableId: nom
+        });
+    });
+
+    function clicked() {
+        socket.emit('help', {
+            tableId: nom
+        });
+    }
+
+    function sendMsg() {
+        socket.emit('msg', {
+            tableId: nom,
+            msg: document.getElementById('msg').value
+        });
+    }
+    socket.on('coming', function (data) {
+        if (nom == data.tableId)
+            alert('Un(e) server(se) a vu votre demande d\'assistance');
+    });
+</script>
