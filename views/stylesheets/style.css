@@ -1,0 +1,13 @@
+footer {
+    background-color:#383;
+    color: #fff;
+    height: 40px;
+    text-align: center;
+    padding-top: 20px;
+}
+
+.colRow {
+    border: 1px solid grey !important;
+    width:100% !important;
+    height:150px !important;
+}

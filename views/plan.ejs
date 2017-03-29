@@ -1,0 +1,163 @@
+<!doctype html>
+<html class="no-js" lang="en" dir="ltr" ng-app="app">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test</title>
+    <link rel="stylesheet" href="./css/foundation.css">
+    <link rel="stylesheet" href="./css/app.css">
+    <link rel="stylesheet" href="./stylesheets/style.css">
+</head>
+
+<body class="plan">
+    <header class="plan-header">
+
+    </header>
+    <div class="row">
+        <div class="small-3 columns">
+            <div sidePlan>______________________</div>
+        </div>
+        <div class="small-6 columns">
+            <div class=' grid-container'>
+                <div id='square-grid' class='square-grid small-center'>
+                </div>
+            </div>
+        </div>
+        <div class="small-3 columns side">
+            <div id="messages"><h3>Messages</h3></div>
+        </div>
+    </div>
+    <script src="./bower_components/jquery/dist/jquery.js"></script>
+    <script src="./js/vendor/what-input.js"></script>
+    <script src="./js/vendor/foundation.js"></script>
+    <script src="./js/app.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script type="text/javascript">
+        var socket = io('localhost:3000');
+        socket.emit('log', {
+            tableId: 0
+        });
+
+        var tableId = 1;
+        var grid = document.getElementById('square-grid');
+        for (var i = 1; i < 21; i++) {
+            for (var j = 1; j < 21; j++) {
+                var square = document.createElement('div');
+                var content = document.createElement('div');
+
+
+                square.className = 'square-grid__cell square-grid__cell--10';
+                content.className = 'square-grid__content';
+                square.id = j + '-' + i;
+
+                square.appendChild(content);
+                grid.appendChild(square);
+            }
+        }
+
+        placeTable(4, 2, 2, 2);
+        placeTable(4, 2, 9, 2);
+        placeTable(4, 2, 16, 2);
+
+        function closeTable(e) {
+            var tableId = e.target.parentElement.parentElement.getAttribute("data-tableid");
+            var squares = document.querySelectorAll("[data-tableid='" + tableId + "']");
+            squares[squares.length / 2 - 1].firstChild.firstChild.className = 'button disabled tiny';
+            squares.forEach(function (el) {
+                el.style.backgroundColor = "gray";
+                el.style.boxShadow = "0 0 0 1px gray";
+            });
+        }
+
+        function placeTable(w, h, x, y) {
+            var butClose = document.createElement('button');
+            butClose.textContent = 'X';
+            butClose.addEventListener('click', closeTable);
+            butClose.className = 'button disabled tiny';
+            butClose.style.background
+
+            var squares = [
+                document.getElementById(x + '-' + y)];
+            for (var i = 0; i < h; i++) {
+                for (var j = 0; j < w; j++) {
+                    squares.push(document.getElementById((x + j) + '-' + y));
+                    squares.push(document.getElementById((x + j) + '-' + (y + i)));
+                }
+            }
+
+            document.getElementById((x + w - 1) + '-' + y).firstChild.appendChild(butClose);
+
+            squares.forEach(function (el) {
+                el.style.backgroundColor = "gray";
+                el.style.boxShadow = '0 0 0 1px gray';
+                el.setAttribute('data-tableId', tableId);
+                el.addEventListener('click', resetToGreen);
+            });
+            squares[0].firstChild.textContent = tableId++;
+            return {
+                x: x,
+                y: y,
+                h: h,
+                w: w
+            }
+        }
+
+        function resetToGreen(e) {
+            e.preventDefault();
+            var tableId = e.target.getAttribute("data-tableid");
+
+            if (e.target.style.backgroundColor === "red") {
+                coming(tableId);
+                var all = document.querySelectorAll("[data-tableid='" + tableId + "']");
+                all[all.length / 2 - 1].firstChild.firstChild.className = 'button alert tiny';
+                all.forEach(function (el) {
+                    el.style.backgroundColor = "green";
+                    el.style.boxShadow = "0 0 0 1px green"
+                });
+            }
+        }
+
+        function tableGreen(table) {
+            var all = document.querySelectorAll("[data-tableid='" + table.tableId + "']");
+            all[all.length / 2 - 1].firstChild.firstChild.className = 'button alert tiny';
+            all.forEach(function (el) {
+                el.style.backgroundColor = "green";
+                el.style.boxShadow = "0 0 0 1px green"
+            });
+        }
+
+        function tableRed(table) {
+            var all = document.querySelectorAll("[data-tableid='" + table.tableId + "']");
+
+            all.forEach(function (el) {
+                el.style.backgroundColor = "red";
+                el.style.boxShadow = "0 0 0 1px red"
+            });
+        }
+        socket.on('log', function (data) {
+            console.log(data);
+            if (data.tableId != 0)
+                tableGreen(data);
+        });
+
+        socket.on('help', tableRed);
+
+        socket.on('msg', function (data) {
+            console.log(data);
+            var mesDiv = document.getElementById('messages');
+            mesDiv.innerHTML += 'table' + data.tableId + ': ' + data.msg + "<br>";
+            
+        });
+
+        function coming(id) {
+            socket.emit('coming', {
+                tableId: id
+            });
+        }
+    </script>
+
+</body>
+
+</html>

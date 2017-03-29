@@ -1,0 +1,22 @@
+{
+  "name": "public",
+  "homepage": "https://github.com/bernier-db/commande2.0",
+  "authors": [
+    "Dave Bernier <bernier.db@gmail.com>"
+  ],
+  "description": "",
+  "main": "",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "*",
+    "angular-route": "*",
+    "foundation": "*"
+  }
+}

@@ -1,0 +1,73 @@
+<!-- Category -->
+<fieldset class="small-10 small-centered columns">
+    <legend>Catégories</legend>
+    <form method='post' action="/gestion/addCategory">
+        <label>Nom</label>
+        <input name="name" type="text">
+        <input type="submit" value="Ajouter">
+    </form>
+</fieldset>
+<!-- Meal -->
+<fieldset class="small-10 small-centered columns">
+    <legend>Repas</legend>
+    <form method='post' action="/gestion/addMeal">
+        <label>Nom du repas</label>
+        <input name="name" type="text">
+        <label>Prix</label>
+        <input name="price" type="text">
+        <label>Description</label>
+        <input name="description" type="text">
+        <label>Disponible</label>
+        <input type='radio' name="available" value="true">Oui
+        <input type='radio' name="available" value="false">Non
+        <br>
+        <label>Catégorie</label>
+        <select name="category">
+            <option ng-repeat="cat in categories" value="{{cat.name}}">{{cat.name}}</option>
+        </select>
+        <label>Url Image</label>
+        <input name="image" type="text">
+
+        <input type='submit' value='Ajouter' />
+    </form>
+</fieldset>
+
+<!-- Commande -->
+<fieldset class="small-10 small-centered columns">
+    <legend>Commande</legend>
+    <form method='post' action="/gestion/addOrder">
+        <label>Table</label>
+        <input name="table" type="text">
+
+        <label>Date yyyy-mm-dd</label>
+        <input id="datePicker" name="date" type="date">
+
+        <label>Fermée?</label>
+        <input type='radio' name="closed" value="true">Oui
+        <input type='radio' name="closed" value="false">Non
+        <br>
+        <label>Serveur</label>
+        <input name="waiter" type="text">
+        <label>Items:</label>
+        <div name="item" ng-repeat="meal in meals">
+            <input type="checkbox" name="item" value="{{meal._id}}"> {{meal.name}}
+        </div>
+        <label>Commentaires sur Resto</label>
+        <textarea name="commentsRest"></textarea>
+        <label>Commentaires sur Waiter</label>
+        <textarea name="commentsWait"></textarea>
+        <input type="submit" id="subOrder" value="Ajouter">
+    </form>
+</fieldset>
+
+<script type="text/javascript">
+    //mettre la date du jour par défaut
+    Date.prototype.toDateInputValue = (function () {
+        var local = new Date(this);
+        local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
+        return local.toJSON().slice(0, 10);
+    });
+    document.getElementById('datePicker').value = new Date().toDateInputValue();
+
+    
+</script>
