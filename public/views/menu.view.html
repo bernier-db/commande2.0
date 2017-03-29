@@ -1,20 +1,81 @@
-<div id='outer'>
-    <h1>MENU</h1>
+<div id='outer' class='menuView'>
 
-    <button class="button alert" onClick='clicked()'>Click me!</button>
-    <textarea id="msg">
 
-    </textarea>
-    <button class="button" onclick="sendMsg()">Envoyer</button>
-    <br>
+    <!-- Navbar (sit on top) -->
+    <div class="w3-top w3-hide-small">
+        <div class="w3-bar w3-xlarge w3-black w3-opacity w3-hover-opacity-off" id="myNavbar">
+            <a href="#" class="w3-bar-item w3-button">HOME</a>
+            <a href="/#!/menu" class="w3-bar-item w3-button">MENU</a>
+            <button style="margin-top:10px; " class="w3-bar-item w3-button button alert large" onClick='clicked()'>Service</button>
+        </div>
+    </div>
 
+    <!-- Header with image -->
+    <header style="" class="bgimg w3-display-container w3-grayscale-min" id="home">
+
+        <div class="w3-display-bottomleft w3-padding">
+            <span class="w3-tag w3-xlarge">ouvert de 10am a 11pm</span>
+        </div>
+        <div class="w3-display-middle w3-center">
+            <span class="w3-text-white " style="font-size:80px">commande2.0</span>
+
+            <p><a href="/#!/menu#menu" class="w3-button w3-xxlarge w3-black">Voir menu</a></p>
+        </div>
+    </header>
+
+    <!-- Menu Container -->
+    <div class="w3-container w3-black w3-padding-64 w3-xxlarge" id="menu">
+        <div class="w3-content">
+
+            <h1 class="w3-center w3-jumbo" style="margin-bottom:64px"> MENU</h1>
+            <div class="w3-row w3-center w3-border w3-border-dark-grey">
+               
+                <div ng-repeat="category in categories">
+                    <a href="javascript:void(0)" ng-click="openMenu(this, category.name);" id="{{category.name}}but">
+                        <div class="w3-col s6 m4 tablink w3-padding-large w3-hover-red">{{category.name}}</div>
+                    </a>
+                </div>
+                <!--
+                <a href="javascript:void(0)" onclick="openMenu(event, 'Pasta');">
+                    <div class="w3-col s4 tablink w3-padding-large w3-hover-red">Salade</div>
+                </a>
+                <a href="javascript:void(0)" onclick="openMenu(event, 'Starter');">
+                    <div class="w3-col s4 tablink w3-padding-large w3-hover-red">entre</div>
+                </a>
+                -->
+            </div>
+
+            <div ng-repeat="category in categories" id="{{category.name}}" class="w3-container menu w3-padding-32 w3-white">
+                <div ng-repeat="meal in meals">
+                    <div ng-if="meal.category == category.name">
+                        <h1><b>{{meal.name}}</b> <span class="w3-right w3-tag w3-dark-grey w3-round">${{meal.price}}</span><button class="button">Ajouter à ma commande</button></h1>
+                      <div style="background:url('{{meal.image}}')" class="mealImage"></div><div class="mealDesc"><p class="w3-text-grey">{{meal.description}}</p></div>
+                        
+                        <hr>
+                    </div>
+                </div>
+                
+            </div>
+
+        
+
+
+            <br>
+
+        </div>
+    </div>
+
+    <!-- About Container -->
+
+
+    <!-- Contact (with google maps) -->
+
+    <!-- Footer -->
+    <footer class="w3-center w3-black w3-padding-48 w3-xxlarge">
+        <p>Powered by <a href="https://www.w3schools.com/w3css/default.asp" title="W3.CSS" target="_blank" class="w3-hover-text-green">Dave Bernier et Vincent Pelletier</a></p>
+    </footer>
     <script src="bower_components/jquery/dist/jquery.js"></script>
     <script src="js/vendor/foundation.js"></script>
-
-
-
-
-
 </div>
 <script src="/socket.io/socket.io.js"></script>
 <script>
@@ -28,11 +89,11 @@
         //Here your view content is fully loaded !!
         nom = scope.tableId;
 
-
-
         socket.emit('log', {
             tableId: nom
         });
+        angular.element(document.getElementById("Classiquesbut")).triggerHandler('click');
+        
     });
 
     function clicked() {
@@ -51,4 +112,22 @@
         if (nom == data.tableId)
             alert('Un(e) server(se) a vu votre demande d\'assistance');
     });
+
+
+    // Tabbed Menu
+    /*
+    function openMenu(evt, menuName) {
+        console.log(menuName);
+        var i, x, tablinks;
+        x = document.getElementsByClassName("menu");
+        for (i = 0; i < x.length; i++) {
+            x[i].style.display = "none";
+        }
+        tablinks = document.getElementsByClassName("tablink");
+        for (i = 0; i < x.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" w3-red", "");
+        }
+        document.getElementById(menuName).style.display = "block";
+        evt.currentTarget.firstElementChild.className += " w3-red";
+    }*/
 </script>
