@@ -6,9 +6,12 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Test</title>
-    <link rel="stylesheet" href="./css/foundation.css">
+    <link rel="stylesheet" href="./bower_components/foundation/css/foundation.min.css">
     <link rel="stylesheet" href="./css/app.css">
     <link rel="stylesheet" href="./stylesheets/style.css">
+
+
+
 </head>
 
 <body class="plan">
@@ -26,16 +29,29 @@
             </div>
         </div>
         <div class="small-3 columns side">
-            <div id="commandes"><h3>Commandes</h3></div>
+            <div id="commandes">
+                <h3>Commandes</h3></div>
+        </div>
+
+
+        <!-- Reveal commande -->
+        <div id="myOrder" class="reveal-modal" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+            <h2 id="modalTitle">Table <span id="tableNo"></span><hr></h2>
+            <div id="orderContainer"></div>
+            <a class="close-reveal-modal" aria-label="Close">&#215;</a>
         </div>
     </div>
-    <script src="./bower_components/jquery/dist/jquery.js"></script>
-    <script src="./js/vendor/what-input.js"></script>
-    <script src="./js/vendor/foundation.js"></script>
-    <script src="./js/app.js"></script>
+
+
+
+    <script src="bower_components/foundation/js/vendor/jquery.js"></script>
+    <script src="bower_components/foundation/js/vendor/fastclick.js"></script>
+    <script src="bower_components/foundation/js/foundation.js"></script>
+    <script src="bower_components/foundation/js/foundation/foundation.reveal.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script type="text/javascript">
         var socket = io('commande20.local/');
+        $(document).foundation();
         socket.emit('log', {
             tableId: 0
         });
@@ -72,11 +88,25 @@
         }
 
         function placeTable(w, h, x, y) {
-            var butClose = document.createElement('button');
-            butClose.textContent = 'X';
+            var butClose = document.createElement('button'),
+                butInfo = document.createElement('button');
+            butClose.innerHTML = '&#x2718;';
             butClose.addEventListener('click', closeTable);
             butClose.className = 'button disabled tiny';
-            butClose.style.background
+            butClose.style.padding = "2px 5px";
+            butClose.style.top = "-3px";
+            butClose.style.right = "-3px";
+
+            butInfo.innerHTML = "?";
+            butInfo.setAttribute("data-reveal-id", "myOrder");
+            butInfo.className = 'button disabled tiny';
+            butInfo.style.padding = "5px 8px";
+            butInfo.style.bottom = "-3px";
+            butInfo.style.left = "-3px";
+            //butInfo.setAttribute('disabled', true);
+            butInfo.addEventListener('click', getOrders);
+
+
 
             var squares = [
                 document.getElementById(x + '-' + y)];
@@ -88,6 +118,7 @@
             }
 
             document.getElementById((x + w - 1) + '-' + y).firstChild.appendChild(butClose);
+            document.getElementById((x) + '-' + (y + h - 1)).firstChild.appendChild(butInfo);
 
             squares.forEach(function (el) {
                 el.style.backgroundColor = "gray";
@@ -148,37 +179,93 @@
             console.log(data);
             var mesDiv = document.getElementById('messages');
             mesDiv.innerHTML += 'table' + data.tableId + ': ' + data.msg + "<br>";
-            
+
         });
 
         socket.on('order', function (data) {
-            
-            $.get("/plan/getOrders", data, function(res){
-              updateOrders(res);
+            $.get("/plan/getOrders", data, function (res) {
+                updateOrders(res);
             });
         });
-        
+
         function coming(id) {
             socket.emit('coming', {
                 tableId: id
             });
         }
-        
-        
-        
-        function updateOrders(orders) {          
-            var div = document.getElementById('commandes');
-            
-            div.innerHTML += "<h4>Table "+orders[0].table+"</h4>"
-            
-            orders.forEach(function(order, idx){
-                console.log(order.table);
-                div.innerHTML += "<hr><h5>#"+(idx+1)+"</h5>";
-                order.items.forEach(function(item) {
-                    div.innerHTML += "<li>"+item.name+"</li>"
-                });
-                
+
+        function getOrders(e) {
+            var tableId = e.target.parentElement.parentElement.getAttribute("data-tableid");
+
+            $.get("/plan/getOrders", {
+                tableId: tableId
+            }, function (res) {
+                updateOrders(res);
             });
+        }
+
+        function updateOrders(orders) {
+            var modal = document.getElementById('orderContainer');
+            document.getElementById('orderContainer').innerHTML = "";
+
+            console.log(modal);
+
+            $("#tableNo").text(orders[0].table);
+
+            modal.style.margin = "auto";
+
+            //Loop les commandes de cette table
+            orders.forEach(function (order, idx) {
+
+                var orderDiv = document.createElement('div'),
+                    ul = document.createElement('ul'),
+                    closeBut = document.createElement('button'),
+                    h5 = document.createElement('h5'),
+                    hidIn = document.createElement('input');
+
+                orderDiv.style.display = "inline-block";
+                orderDiv.style.border = "1px dotted lightgrey";
+                orderDiv.style.verticalAlign = "top";
+                orderDiv.style.borderStyle = "none solid";
+                orderDiv.style.padding = "5px 20px 0px 15px";
+                orderDiv.style.minWidth = "150px";
+                h5.textContent = "#" + (idx + 1) + " ";
+
+
+                closeBut.textContent = "Fermer";
+                closeBut.className = "button alert";
+                closeBut.style.padding = "5px 5px";
+                closeBut.style.float = "right";
+                closeBut.addEventListener('click', closeOrder);
+                
+                hidIn.setAttribute('type', 'hidden');
+                hidIn.value = order._id;
+                
+                orderDiv.appendChild(document.createElement('hr'));
+                orderDiv.appendChild(hidIn);
+                h5.appendChild(closeBut);
+                orderDiv.appendChild(h5);
+                orderDiv.appendChild(document.createElement('hr'));
+                
+                //Loop les repas commandés
+                order.items.forEach(function (item) {
+
+                    ul.innerHTML += "<li>" + item.name + "</li>"
+
+                });
+
+                orderDiv.appendChild(ul);
+                
+                modal.appendChild(orderDiv);
+            });
+
+        }
+        
+        function closeOrder(e){
+            var id = e.target.parentElement.previousSibling.value;
+            console.log(id);
+            /*Post request d'un update de commande. P-e à faire dans modèle aussi*/
+            
         }
     </script>
 
