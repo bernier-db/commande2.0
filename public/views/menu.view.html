@@ -2,11 +2,11 @@
 
 
     <!-- Navbar (sit on top) -->
-    <div class="w3-top w3-hide-small">
+    <div class="w3-top">
         <div class="w3-bar w3-xlarge w3-black w3-opacity w3-hover-opacity-off" id="myNavbar">
-            <a href="#" class="w3-bar-item w3-button">HOME</a>
-            <a href="/#!/menu" class="w3-bar-item w3-button">MENU</a>
-            <button style="margin-top:10px; " class="w3-bar-item w3-button button alert large" onClick='clicked()'>Service</button>
+
+            <button class="w3-bar-item button alert large" onClick='clicked()'>Service</button>
+            <button data-reveal-id="myOrder" class="w3-bar-item w3-right button success large ">Ma commande (<span id="nbItems">0</span>)</button>
         </div>
     </div>
 
@@ -29,72 +29,70 @@
 
             <h1 class="w3-center w3-jumbo" style="margin-bottom:64px"> MENU</h1>
             <div class="w3-row w3-center w3-border w3-border-dark-grey">
-               
+
                 <div ng-repeat="category in categories">
                     <a href="javascript:void(0)" ng-click="openMenu(this, category.name);" id="{{category.name}}but">
                         <div class="w3-col s6 m4 tablink w3-padding-large w3-hover-red">{{category.name}}</div>
                     </a>
                 </div>
-                <!--
-                <a href="javascript:void(0)" onclick="openMenu(event, 'Pasta');">
-                    <div class="w3-col s4 tablink w3-padding-large w3-hover-red">Salade</div>
-                </a>
-                <a href="javascript:void(0)" onclick="openMenu(event, 'Starter');">
-                    <div class="w3-col s4 tablink w3-padding-large w3-hover-red">entre</div>
-                </a>
-                -->
+
             </div>
 
             <div ng-repeat="category in categories" id="{{category.name}}" class="w3-container menu w3-padding-32 w3-white">
                 <div ng-repeat="meal in meals">
                     <div ng-if="meal.category == category.name">
-                        <h1><b>{{meal.name}}</b> <span class="w3-right w3-tag w3-dark-grey w3-round">${{meal.price}}</span><button class="button">Ajouter à ma commande</button></h1>
-                      <div style="background:url('{{meal.image}}')" class="mealImage"></div><div class="mealDesc"><p class="w3-text-grey">{{meal.description}}</p></div>
-                        
+                        <h1><b>{{meal.name}}</b> <span class="w3-right w3-tag w3-dark-grey w3-round">${{meal.price}}</span><br>
+                        <button class="button" ng-click="addToOrder(this, meal)">Ajouter</button></h1>
+                        <div style="background:url('{{meal.image}}')" class="mealImage"></div>
+                        <div class="mealDesc">
+                            <p class="w3-text-grey w3-xlarge">{{meal.description}}</p>
+                        </div>
+
                         <hr>
                     </div>
                 </div>
-                
+
             </div>
-
-        
-
-
             <br>
 
         </div>
     </div>
 
-    <!-- About Container -->
-
-
-    <!-- Contact (with google maps) -->
 
     <!-- Footer -->
     <footer class="w3-center w3-black w3-padding-48 w3-xxlarge">
         <p>Powered by <a href="https://www.w3schools.com/w3css/default.asp" title="W3.CSS" target="_blank" class="w3-hover-text-green">Dave Bernier et Vincent Pelletier</a></p>
     </footer>
-    <script src="bower_components/jquery/dist/jquery.js"></script>
-    <script src="js/vendor/foundation.js"></script>
+
+    
+
+
 </div>
-<script src="/socket.io/socket.io.js"></script>
+
+<!-- Reveal commande -->
+    <div id="myOrder" class="reveal-modal" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+        <h2 id="modalTitle">Vos Items</h2>
+        <ul id="orderedItems"> </ul>
+
+        <button id="sendOrderBtn" class="button success" onclick="sendOrder()" disabled>Passer la commande</button>
+
+        <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+    </div>
+
 <script>
-    /****  IMPORTANT Entrer l'Adresse ip du server  ****/
-    var socket = io.connect('http://10.10.50.91:3000');
+    var nom = "";
+    var nbItem = 0;
     var scope = angular.element($("#outer")).scope();
-    var nom;
-    angular.element(function () {
-        console.log('page loading completed');
 
-        //Here your view content is fully loaded !!
+    setTimeout(function () {
+        $(document).foundation();
+        //do this after view has loaded :)
         nom = scope.tableId;
-
         socket.emit('log', {
             tableId: nom
         });
-        angular.element(document.getElementById("Classiquesbut")).triggerHandler('click');
-        
-    });
+
+    }, 1000);
 
     function clicked() {
         socket.emit('help', {
@@ -110,24 +108,30 @@
     }
     socket.on('coming', function (data) {
         if (nom == data.tableId)
-            alert('Un(e) server(se) a vu votre demande d\'assistance');
+            alert('Un/e serveu/r/se a vu votre demande d\'assistance');
     });
 
+    function delMeal(e) {
+        e.target.parentElement.parentElement.removeChild(e.target.parentElement);
+        $('#nbItems')[0].innerText = --nbItem;
+        if (nbItem === 0) $("#sendOrderBtn").prop('disabled', true);
+    }
 
-    // Tabbed Menu
-    /*
-    function openMenu(evt, menuName) {
-        console.log(menuName);
-        var i, x, tablinks;
-        x = document.getElementsByClassName("menu");
-        for (i = 0; i < x.length; i++) {
-            x[i].style.display = "none";
-        }
-        tablinks = document.getElementsByClassName("tablink");
-        for (i = 0; i < x.length; i++) {
-            tablinks[i].className = tablinks[i].className.replace(" w3-red", "");
-        }
-        document.getElementById(menuName).style.display = "block";
-        evt.currentTarget.firstElementChild.className += " w3-red";
-    }*/
+    function sendOrder() {
+        var els = document.getElementsByClassName("orderedId");
+        var order = {};
+        order.items = [];
+
+        [].forEach.call(els, function (inId) {
+            console.log(inId.value);
+            order.items.push(inId.value);
+        });
+
+
+        order.tableId = nom;
+        console.log(order);
+        
+        socket.emit('order', order);
+        scope.sendOrder(order);
+    }
 </script>

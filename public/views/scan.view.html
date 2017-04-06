@@ -1,53 +1,97 @@
-<style>
-    #outer,
+<style type="text/css">
+    body,
     h1 {
         font-family: "Raleway", sans-serif
     }
     
-    #outer,
+    body,
     html {
         height: 100%
     }
     
-    .bgimg {
-        background-image: url('/w3images/forestbridge.jpg');
+    .scan_banner {
+        background-image: url('image/pizza.jpg');
         min-height: 100%;
         background-position: center;
         background-size: cover;
+        text-align: center;
+        color: white;
+    }
+    
+    .left_banner {
+        text-align: left;
+    }
+    
+    .button {
+        background-color: black;
+        color: red;
+        padding: 10px;
+        cursor: pointer;
+    }
+    
+    .scanner {
+        background-color: gray;
+        max-width: 400px;
+        margin: auto;
+    }
+    
+    div.fileinputs {
+        position: relative;
+    }
+    
+    div.fakefile {
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        z-index: 1;
+    }
+    
+    div.fakefile input[type=button] {
+        /* enough width to completely overlap the real hidden file control */
+        cursor: pointer;
+        width: 148px;
+    }
+    
+    div.fileinputs input.file {
+        position: relative;
+        text-align: right;
+        -moz-opacity: 0;
+        filter: alpha(opacity: 0);
+        opacity: 0;
+        z-index: 2;
     }
 </style>
-<div id="outer">
-<div class="w3-display-container w3-animate-opacity ">
-    <div class="w3-display-topleft w3-padding-large w3-xlarge">
+<div id="outer" class="jumbotron scan_banner ">
+    <div class="left_banner">
         Commande 2.0
     </div>
-    <div class="w3-display-middle">
-        <h1 style="margin-top:400px"class="w3-jumbo w3-animate-top">Scanner <br>COMING SOON</h1>
-        <hr class="w3-border-grey" style="margin:auto;width:40%">
-        <p class="w3-large w3-center">7 days left</p>
+    <div class="">
+        <h1 class="">Scanner</h1>
+        <hr class="" style="margin:auto;width:40%">
+        <div class="sample grid__col--2 scanner ">
+
+            <img src="image/webcam.png" style="width:304px;height:auto;padding:10px;" id="qr" />
+            <p>
+                <label for="capture" class="button">photo</label>
+
+                <input type="file" class="show-for-sr" accept="image/*" id="capture" capture="camera" onchange="load()">
+                <button class="button" onclick="decode()">Analyser</button>
+                <!--http://stackoverflow.com/questions/5802580/html-input-type-file-get-the-image-before-submitting-the-form-->
+            </p>
+        </div>
+
     </div>
-    <div class="w3-display-bottomleft w3-padding-large">
-        Powered by <a href="https://www.w3schools.com/w3css/default.asp" target="_blank">Dave et Vincent</a>
-    </div>
+
 </div>
 
-<!-- partie semi-fonctionnelle 
-<div id="outer" class="fileinputs">
-    <input id="code" class="file" type="file" accept="image/*" capture="camera" onChange="load()">
 
-    <div class="fakefile">
-        <input type="button" class="button" value="Prendre photo" />
-    </div>
-    <img id="qr" src="" />
-    <button id="send" class="button" onclick="decode()" disabled>Envoyer</button>
-</div>
--->
-<script src="../bower_components/qcode-decoder/build/qcode-decoder.min.js"></script>
+<script src="bower_components/qcode-decoder/build/qcode-decoder.min.js"></script>
+
 
 
 <script style="text/javascript">
     function load() {
-        var input = document.getElementById('code');
+        var input = document.getElementById('capture');
 
         if (input.files && input.files[0]) {
 
@@ -57,22 +101,46 @@
                 img.setAttribute('src', e.target.result);
             };
             reader.readAsDataURL(input.files[0]);
-            document.getElementById('send').textContent = "Scan";
-            document.getElementById('send').disabled = false;
+           
         }
     }
 
     function decode() {
-        var img = document.getElementById('qr');
-        QCodeDecoder().decodeFromImage(img, function (er, res) {
 
-            var scope = angular.element($("#outer")).scope();
-            console.log('scope:', scope);
-            scope.$apply(function () {
-                scope.saveTable(res);
-                alert(res);
-            });
+        var img = document.getElementById('qr');
+        var qr = new QCodeDecoder();
+        qr.decodeFromImage(img, function (err, result) {
+            //if (err) throw err;
+
+
+
+            if (result != undefined) {
+                alert(result);
+                var scope = angular.element($("#outer")).scope();
+                
+                scope.$apply(function () {
+                    scope.saveTable(result);
+                    
+                });
+                socket.emit('log', {
+                    tableId: result
+                });
+                window.location = "/#!/menu";
+            } else {
+                alert("Reprendre");
+            }
         });
-        window.location = "/#!/menu";
+
+
     }
 </script>
+
+<!--e.activator.onclick = function(r) 
+{
+  r && r.preventDefault(), e.decoder.call(qr, e.target, function(e, r) 
+  {
+    if (e) throw e;
+    alert("Just decoded: " + r)
+  }, !0)
+  
+}-->

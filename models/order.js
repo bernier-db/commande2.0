@@ -48,6 +48,13 @@ module.exports.getOrderByDate = function(date, callback){
     
     Order.find(query, callback).populate('items');   
 }
+//get order by table
+module.exports.getOrdersByTable = function(tableId, callback) {
+    var date = new Date().setHours(0,0,0,0);
+    var query = {table: tableId, date: date, closed: false};
+    
+    Order.find(query, callback).populate('items');
+}
 
 //Add order
 module.exports.addOrder = function(newOrder, callback) {

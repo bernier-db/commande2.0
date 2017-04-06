@@ -78,13 +78,11 @@ app.use(function(err, req, res, next) {
 var clients = {};
 io.on('connection', function (socket) {    
     
-    socket.on('log', function (data) {
-        
+    socket.on('log', function (data) {     
         io.emit('log', data);
     });
     
     socket.on('help', function (message) {
-
         io.emit("help", message);
     });
     
@@ -93,10 +91,13 @@ io.on('connection', function (socket) {
         io.emit("msg", message);
     });
     socket.on('coming', function(data) {
-        
         io.emit('coming', data);
     });
-    
+    socket.on('order', function(order) {
+        console.log(order);
+        
+        io.emit('order', order);
+    });
 });
 
 
