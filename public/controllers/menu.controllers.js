@@ -30,23 +30,28 @@ angular.module("app")
     $scope.addToOrder = function (but, meal) {
         var li = document.createElement('li'),
             delBut = document.createElement('button'),
-            hidIn = document.createElement('input');
+            hidIn = document.createElement('input'),
+            span  = document.createElement('span');
 
         hidIn.setAttribute("type", "hidden");
         hidIn.setAttribute("value", meal._id);
         hidIn.setAttribute("class", "orderedId");
 
         delBut.className = "w3-button w3-tiny w3-red";
-        delBut.textContent = "X";
+        delBut.innerHTML = "&#x2718";
         delBut.style.padding = "4px 8px";
 
+        
+        span.className = "mealState";
+        
+        
         li.textContent = meal.name + " ";
-        li.style.fontSize = "20px";
+        li.style.fontSize = "25px";
         li.style.fontFamily = "raleway";
         delBut.onclick = delMeal;
 
-
-        li.appendChild(delBut);
+        span.appendChild(delBut);
+        li.appendChild(span);
         li.appendChild(hidIn);
         document.getElementById('orderedItems').appendChild(li);
 

@@ -71,10 +71,10 @@
 
 <!-- Reveal commande -->
     <div id="myOrder" class="reveal-modal" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
-        <h2 id="modalTitle">Vos Items</h2>
+        <h2 id="modalTitle">Vos Items<hr></h2>
         <ul id="orderedItems"> </ul>
 
-        <button id="sendOrderBtn" class="button success" onclick="sendOrder()" disabled>Passer la commande</button>
+        <button id="sendOrderBtn" class="button success w3-right" onclick="sendOrder()" disabled>Passer la commande</button>
 
         <a class="close-reveal-modal" aria-label="Close">&#215;</a>
     </div>
@@ -125,6 +125,7 @@
         [].forEach.call(els, function (inId) {
             console.log(inId.value);
             order.items.push(inId.value);
+            nbItem--;
         });
 
 
@@ -133,5 +134,15 @@
         
         socket.emit('order', order);
         scope.sendOrder(order);
+        
+        //enlever les balises input
+        $('#orderedItems :input').remove();  
+        $('#orderedItems .mealState').text("\u2713");
+        $('#orderedItems li').css('font-style', 'italic');
+        $("#sendOrderBtn").prop('disabled', true);
+        
+        
+        $('#nbItems')[0].innerText = nbItem;
     }
+    
 </script>
