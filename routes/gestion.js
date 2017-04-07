@@ -82,26 +82,6 @@ router.post('/addOrder', function (req, res, next) {
     var closed = req.body.closed == 'true' ? true : false;
     var waiter = req.body.waiter;
 
-    /*
-       
-        if (typeof(req.body.item) === 'object'){    
-            req.body.item.forEach(function(item, i){
-               var meal = {
-                    name: item,
-                    price: req.body.price[i],
-                    quantity: parseInt(req.body.quantity[i])
-                }
-                items.push(meal);
-        })
-        } else {
-            var meal = {
-                    name: req.body.item,
-                    price: req.body.price,
-                    quantity: parseInt(req.body.quantity)
-                }
-                items.push(meal);
-        }
-     */
     var commentRest = req.body.commentRes;
     var commentWait = req.body.commentWait;
 

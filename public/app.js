@@ -14,5 +14,6 @@ app.config(['$routeProvider', function($routeProvider){
     when('/menu', {
         templateUrl: 'views/menu.view.html',
         controller: 'MenuCtrl'
-    })
+    }).
+    otherwise("/scan");
 }]);

@@ -79,6 +79,26 @@ h6 {
     float: left;
     border-radius: 5px;
 }
+
+@media screen and (max-width: 480px){
+    .mealImage {
+        width: 100px;
+    height: 75px;
+    }
+}
+
 .m4, .l4, .s6, .s5, .s4, .s3, .s2, w3-half {
     white-space: nowrap;
+}
+
+.menuView {
+    background-color: black;
+}
+footer {
+    bottom:0px;
+}
+#orderedItems {
+    width: 250px;
+    margin:auto;
+    list-style: circle;
 }
