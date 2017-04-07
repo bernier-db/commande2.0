@@ -58,7 +58,16 @@
         </div>
     </div>
 
-
+    <div style="font-size: 80px;
+    border-radius: 80px;
+    background-color: rgba(128,128,128,0.4);
+    position: fixed;
+    padding: 5px 40px;
+    align-self: center;
+    top: 50%;
+    right: 40%;
+    display:none;
+    "id="confirm">&#x2714;</div>
     <!-- Footer -->
     <footer class="w3-center w3-black w3-padding-48 w3-xxlarge">
         <p>Powered by <a href="https://www.w3schools.com/w3css/default.asp" title="W3.CSS" target="_blank" class="w3-hover-text-green">Dave Bernier et Vincent Pelletier</a></p>
@@ -73,8 +82,8 @@
     <div id="myOrder" class="reveal-modal" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
         <h2 id="modalTitle">Vos Items<hr></h2>
         <ul id="orderedItems"> </ul>
-
-        <button id="sendOrderBtn" class="button success w3-right" onclick="sendOrder()" disabled>Passer la commande</button>
+        
+        <button style="margin-top:40px;"id="sendOrderBtn" class="button success w3-right" onclick="sendOrder()" disabled>Passer la commande</button>
 
         <a class="close-reveal-modal" aria-label="Close">&#215;</a>
     </div>
@@ -112,7 +121,7 @@
     });
 
     function delMeal(e) {
-        e.target.parentElement.parentElement.removeChild(e.target.parentElement);
+        $(e.target.parentElement.parentElement).remove();
         $('#nbItems')[0].innerText = --nbItem;
         if (nbItem === 0) $("#sendOrderBtn").prop('disabled', true);
     }
@@ -144,5 +153,7 @@
         
         $('#nbItems')[0].innerText = nbItem;
     }
+    
+
     
 </script>

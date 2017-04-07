@@ -62,4 +62,18 @@ router.post('/addOrder', function (req, res, next) {
 
 });
 
+router.post('/closeOrder', function (req, res, next) {
+    console.log('CLOSE ORDERRRRRR');
+    
+    Order.closeOrder(req.body.id, function(err, order) {
+        if(err) {
+            console.log(err);
+        }
+        res.location(req.body.url);
+        res.redirect(req.body.url);
+    });       
+});
+
+
+
 module.exports = router;

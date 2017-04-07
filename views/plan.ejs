@@ -51,6 +51,8 @@
     <script src="/socket.io/socket.io.js"></script>
     <script type="text/javascript">
         var socket = io('commande20.local/');
+        var interval;
+
         $(document).foundation();
         socket.emit('log', {
             tableId: 0
@@ -99,11 +101,14 @@
 
             butInfo.innerHTML = "?";
             butInfo.setAttribute("data-reveal-id", "myOrder");
-            butInfo.className = 'button disabled tiny';
+            butInfo.className = 'button default tiny';
             butInfo.style.padding = "5px 8px";
             butInfo.style.bottom = "-3px";
             butInfo.style.left = "-3px";
-            //butInfo.setAttribute('disabled', true);
+            butInfo.setAttribute('disabled', true);
+            butInfo.setAttribute("id", "info" + tableId);
+            butInfo.addEventListener('click', stopFlashing);
+
             butInfo.addEventListener('click', getOrders);
 
 
@@ -169,8 +174,10 @@
         }
         socket.on('log', function (data) {
             console.log(data);
-            if (data.tableId != 0)
+            if (data.tableId != 0) {
                 tableGreen(data);
+                document.getElementById("info" + data.tableId).disabled = false;
+            }
         });
 
         socket.on('help', tableRed);
@@ -183,9 +190,15 @@
         });
 
         socket.on('order', function (data) {
-            $.get("/plan/getOrders", data, function (res) {
+
+            var butInfo = document.getElementById("info" + data.tableId);
+
+            interval = setInterval(function () {
+                startFlashing(butInfo);
+            }, 500);
+            /*$.get("/plan/getOrders", data, function (res) {
                 updateOrders(res);
-            });
+            });*/
         });
 
         function coming(id) {
@@ -237,16 +250,16 @@
                 closeBut.style.padding = "5px 5px";
                 closeBut.style.float = "right";
                 closeBut.addEventListener('click', closeOrder);
-                
+
                 hidIn.setAttribute('type', 'hidden');
                 hidIn.value = order._id;
-                
+
                 orderDiv.appendChild(document.createElement('hr'));
                 orderDiv.appendChild(hidIn);
                 h5.appendChild(closeBut);
                 orderDiv.appendChild(h5);
                 orderDiv.appendChild(document.createElement('hr'));
-                
+
                 //Loop les repas commandés
                 order.items.forEach(function (item) {
 
@@ -255,17 +268,45 @@
                 });
 
                 orderDiv.appendChild(ul);
-                
+
                 modal.appendChild(orderDiv);
             });
 
         }
-        
-        function closeOrder(e){
-            var id = e.target.parentElement.previousSibling.value;
-            console.log(id);
-            /*Post request d'un update de commande. P-e à faire dans modèle aussi*/
-            
+
+        function closeOrder(e) {
+            console.log('e.target', e.target);
+            var id = $(e.target)[0].parentElement.parentElement.remove();
+
+            data = {
+                id: id,
+                url: '/plan'
+            }
+            $.post('/plan/closeOrder', data, function () {
+                document.getElementById('orderContainer').remove(e.target.parentElement);
+            });
+        }
+
+        function startFlashing(el) {
+            console.log(el);
+
+            if (el.className.search("warning") != -1) {
+                el.className = el.className.replace("warning", "default");
+                console.log(el.className);
+            } else {
+
+                el.className = el.className.replace("default", "warning");
+                console.log(el.className);
+            }
+
+        }
+
+        function stopFlashing(e) {
+            clearInterval(interval);
+            var el = e.target;
+            if (el.className.search("default") != -1) {
+                el.className = el.className.replace("warning", "default");
+            }
         }
     </script>
 

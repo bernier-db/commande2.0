@@ -31,7 +31,7 @@ angular.module("app")
         var li = document.createElement('li'),
             delBut = document.createElement('button'),
             hidIn = document.createElement('input'),
-            span  = document.createElement('span');
+            span = document.createElement('span');
 
         hidIn.setAttribute("type", "hidden");
         hidIn.setAttribute("value", meal._id);
@@ -41,10 +41,10 @@ angular.module("app")
         delBut.innerHTML = "&#x2718";
         delBut.style.padding = "4px 8px";
 
-        
+
         span.className = "mealState";
-        
-        
+
+
         li.textContent = meal.name + " ";
         li.style.fontSize = "25px";
         li.style.fontFamily = "raleway";
@@ -57,20 +57,25 @@ angular.module("app")
 
         $('#nbItems')[0].innerText = ++nbItem;
         $("#sendOrderBtn").prop('disabled', false);
+
+        $("#confirm").fadeIn(500, function () {
+            $("#confirm").fadeOut(500);
+
+        });
     }
 
     $scope.sendOrder = function (order) {
 
-        var req = {
-            item: order.items,
-            table: order.tableId,
-            date: new Date().setHours(0,0,0,0),
-            url: '/#!/menu',
-            closed: false,
-            waiter: ""
-        }
-        console.log("on envoieeee", req);
-        $http.post('plan/addOrder', req);
+    var req = {
+        item: order.items,
+        table: order.tableId,
+        date: new Date().setHours(0, 0, 0, 0),
+        url: '/#!/menu',
+        closed: false,
+        waiter: ""
+    }
+    console.log("on envoieeee", req);
+    $http.post('plan/addOrder', req);
     }
 
 }]);

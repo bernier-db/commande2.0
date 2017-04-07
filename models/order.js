@@ -61,3 +61,17 @@ module.exports.addOrder = function(newOrder, callback) {
     
     newOrder.save(callback);
 }
+//Update order
+module.exports.closeOrder = function(id, callback) {
+    
+    Order.findById(id, function (err, order) {
+        if (!order) {
+            return next(new Error('could not load meal'));
+        } else {
+            //Update
+            order.closed = true;
+            
+            order.save(callback);
+        }
+    });
+}
