@@ -63,11 +63,15 @@ router.post('/addOrder', function (req, res, next) {
 });
 
 router.post('/closeOrder', function (req, res, next) {
-    console.log('CLOSE ORDERRRRRR');
+    console.log("Dans fonction router.post");
+    console.log(req.body.id);
     
     Order.closeOrder(req.body.id, function(err, order) {
         if(err) {
-            console.log(err);
+            console.log("ERRROOORRRRRRRRRR:", err);
+            res.location('/error');
+            res.redirec('/error');
+            throw err;
         }
         res.location(req.body.url);
         res.redirect(req.body.url);

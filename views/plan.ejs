@@ -19,20 +19,13 @@
 
     </header>
     <div class="row">
-        <div class="small-3 columns">
-            <div sidePlan>______________________</div>
-        </div>
-        <div class="small-6 columns">
+
+        <div class="small-12 columns">
             <div class=' grid-container'>
                 <div id='square-grid' class='square-grid small-center'>
                 </div>
             </div>
         </div>
-        <div class="small-3 columns side">
-            <div id="commandes">
-                <h3>Commandes</h3></div>
-        </div>
-
 
         <!-- Reveal commande -->
         <div id="myOrder" class="reveal-modal" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
@@ -213,7 +206,8 @@
             $.get("/plan/getOrders", {
                 tableId: tableId
             }, function (res) {
-                updateOrders(res);
+                if(Array.isArray(res) && res.length > 0)
+                    updateOrders(res);
             });
         }
 
@@ -276,14 +270,15 @@
 
         function closeOrder(e) {
             console.log('e.target', e.target);
-            var id = $(e.target)[0].parentElement.parentElement.remove();
-
+            var id =  e.target.parentElement.previousSibling.value;
+            
             data = {
                 id: id,
                 url: '/plan'
             }
+          
             $.post('/plan/closeOrder', data, function () {
-                document.getElementById('orderContainer').remove(e.target.parentElement);
+                document.getElementById('orderContainer').removeChild(e.target.parentElement.parentElement);
             });
         }
 
